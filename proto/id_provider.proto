@@ -1,0 +1,13 @@
+syntax = "proto3";
+package id_provider;
+
+service IdProvider {
+    rpc get_id (IdRequest) returns (IdResponse);
+}
+
+message IdRequest {
+}
+
+message IdResponse {
+    int64 node_id = 1;
+}

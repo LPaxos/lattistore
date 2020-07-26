@@ -1,0 +1,3 @@
+[submodule "client-proto"]
+	path = proto/client
+	url = ../client-proto

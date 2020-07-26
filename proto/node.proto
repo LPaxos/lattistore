@@ -1,0 +1,102 @@
+syntax = "proto3";
+package node;
+
+service Acceptor {
+    rpc promise (Balnum) returns (PromiseResponse);
+    rpc propose (Proposal) returns (ProposeResponse);
+    rpc get_balnum (Empty) returns (Balnum);
+}
+
+service Replica {
+    rpc commit_and_read (CommitAndReadRequest) returns (CommitAndReadResponse);
+}
+
+message CommitAndReadRequest {
+    MaybeCommit commit = 1;
+    SetOfKeys read_set = 2;
+    int64 read_cr_id = 3;
+    uint64 read_slot = 4;
+}
+
+message ProposeResponse {
+    oneof result {
+        Empty accepted = 1;
+        Preempted preempted = 2;
+    }
+}
+
+message Preempted {
+    Balnum num = 1;
+    uint64 slot = 2;
+}
+
+message PromiseResponse {
+    oneof result {
+        Promised promised = 1;
+        Balnum rejected = 2;
+    }
+}
+
+message Promised {
+    oneof promise {
+        Empty no_proposal = 1;
+        Proposal proposal = 2; 
+    }
+}
+
+message CommitAndReadResponse {
+    oneof result {
+        Empty preempted = 1;
+        Handled already_handled = 2;
+        VersionedPatch versioned = 3;
+    }
+}
+
+message Handled {
+    map<string, string> read_patch = 1;
+    bool preempted = 2;
+}
+
+message VersionedPatch {
+    map<string, ValueAndSlot> patch = 1;
+}
+
+message MaybeCommit {
+    oneof c {
+        Commit commit = 1;
+        Empty no_commit = 2;
+    }
+}
+
+message Commit {
+    Decree dec = 1;
+    uint64 slot = 2;
+}
+
+message Proposal {
+    Decree dec = 1;
+    Balnum num = 2;
+    uint64 slot = 3;
+}
+
+message Decree {
+    int64 cr_id = 1;
+    map<string, string> read_patch = 2;
+    map<string, string> write_patch = 3;
+}
+
+message Balnum {
+    uint64 fst = 1;
+    int64 node_id = 2;
+}
+
+message SetOfKeys {
+    repeated string keys = 1;
+}
+
+message ValueAndSlot {
+    string value = 1;
+    uint64 slot = 2;
+}
+
+message Empty {}

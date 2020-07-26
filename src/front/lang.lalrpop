@@ -1,0 +1,60 @@
+use crate::front::ast::*;
+use crate::patch::*;
+
+grammar;
+
+pub Prog: Vec<Stmt> = {
+    Stmt*
+};
+
+Stmt: Stmt = {
+    "get" <Key> ";" => Stmt::Get(<>),
+    "put" <Key> <Expr> ";" => Stmt::Put(<>),
+    <Ident> "=" <Expr> ";" => Stmt::Assign(<>),
+    "if" <BoolExpr> "{" <Prog> "}" "else" "{" <Prog> "}" => Stmt::If(<>),
+    "if" <BoolExpr> "{" <Prog> "}" => Stmt::If(<>, vec![]),
+};
+
+Expr: Expr = {
+    <l: Expr> "+" <r: Factor> => Expr::ArithOp(Box::new(l), ArithOp::Add, Box::new(r)),
+    Factor,
+};
+
+Factor: Expr = {
+    Term,
+};
+
+Term: Expr = {
+    "(" <Expr> ")",
+    Value => Expr::Const(<>),
+    <Ident> => Expr::Ident(<>),
+    "get" <Key> => Expr::Get(<>),
+};
+
+BoolExpr: BoolExpr = {
+    <l: BoolExpr> "||" <r: BFactor> => BoolExpr::Conn(Box::new(l), BoolOp::Or, Box::new(r)),
+    BFactor,
+};
+
+BFactor: BoolExpr = {
+    <l: BFactor> "&&" <r: BTerm> => BoolExpr::Conn(Box::new(l), BoolOp::And, Box::new(r)),
+    BTerm,
+};
+
+BTerm: BoolExpr = {
+    "(" <BoolExpr> ")",
+    <l: Expr> "==" <r: Expr> => BoolExpr::Cmp(l, CmpOp::Eq, r),
+};
+
+Ident: Ident = {
+    // FIXME: limit the length of identifiers
+    r"[A-Za-z]+" => Ident((<>).to_string())
+};
+
+Key: Key = { String };
+
+Value: Value = { String };
+
+String: String = {
+    <s:r#""[^"]*""#> => s[1..s.len()-1].to_string()
+}

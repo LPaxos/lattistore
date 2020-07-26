@@ -1,0 +1,31 @@
+[package]
+name = "lattistore"
+version = "0.1.0"
+authors = ["Kamil Braun <kamilgbraun@gmail.com>"]
+edition = "2018"
+
+[[bin]]
+name = "server"
+path = "src/server.rs"
+
+[[bin]]
+name = "client"
+path = "src/client.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[build-dependencies]
+lalrpop = { version = "0.19", features = ["lexer"] }
+tonic-build = "0.3"
+
+[dependencies]
+futures = "0.3"
+futures-util = "0.3"
+rand = "0.7"
+regex = "1"
+tokio = { version = "0.2", features = ["macros", "rt-core", "sync", "time"] }
+tonic = "0.3"
+prost = "0.6"
+lalrpop-util = "0.19"
+clap = "3.0.0-beta.1"
+log = "0.4"
+simplelog = "0.7"
