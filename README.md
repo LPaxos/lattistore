@@ -6,7 +6,7 @@ Proof-of-concept implementation of a distributed key-value store with strictly s
 
 Clone the repository:
 ```
-git clone https://github.com/LattiStore/lattistore
+git clone https://github.com/LPaxos/lattistore
 cd lattistore
 ```
 Pull the submodule (there is one with a protobuf file):
@@ -139,7 +139,7 @@ Mutliple nodes may believe to be a leader at the same time but the used algorith
 
 ## How it works
 
-The store uses LPaxos, a yet unpublished consensus/replication algorithm that will hopefully help me get a Master's degree. A link to the thesis should be published after it's defended.
+The store uses LPaxos, a consensus/replication algorithm that was the topic of my Master's thesis in Computer Science. Here's the link: [LPaxos](https://github.com/LPaxos/LPaxos).
 
 ## Other notes
 
